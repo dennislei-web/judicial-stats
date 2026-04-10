@@ -246,7 +246,7 @@
                     <div class="chart-container"><canvas id="chartFamilyAppeal"></canvas></div>
                 </div>
                 <div class="chart-card">
-                    <div class="chart-title">113 年家事事件訴訟程序分布（年報）</div>
+                    <div class="chart-title">① 113 年家事事件按訴訟程序分類</div>
                     <div class="chart-container"><canvas id="chartFamilyProcedure"></canvas></div>
                 </div>
                 <div class="chart-card">
@@ -254,11 +254,11 @@
                     <div class="chart-container"><canvas id="chartFamilyProcTrend"></canvas></div>
                 </div>
                 <div class="chart-card">
-                    <div class="chart-title">113 年家事非訟事件細類（年報）</div>
+                    <div class="chart-title">② 113 年「家事非訟事件」細項 drill-down（不含保護令/調解等）</div>
                     <div class="chart-container"><canvas id="chartFamilyNonLit"></canvas></div>
                 </div>
                 <div class="chart-card full">
-                    <div class="chart-title">家事非訟前 6 大細類歷年趨勢（109-113 年）</div>
+                    <div class="chart-title">家事非訟事件細項歷年趨勢（109-113 年）</div>
                     <div class="chart-container"><canvas id="chartFamilyNonLitTrend"></canvas></div>
                 </div>
                 <div class="chart-card">
@@ -800,9 +800,14 @@
             });
         }
 
-        // Family non-litigation (doughnut)
+        // Family non-litigation (doughnut) - only show items that are within the "家事非訟事件" category
+        // in the procedure chart, to avoid double-counting with 保護令/調解/公示催告/其他
+        const EXCLUDED_FROM_NARROW = ['保護令聲請事件', '調解裁定', '公示催告', '夫妻財產制契約登記事項',
+                                       '共同財產制', '分別財產制', '履行勸告事件', '保全程序', '其他', '其他事件'];
         if (data.family_non_litigation && data.family_non_litigation.length > 0) {
-            const nonLit = data.family_non_litigation.filter(c => c.name !== '非訟事件計');
+            const nonLit = data.family_non_litigation
+                .filter(c => c.name !== '非訟事件計')
+                .filter(c => !EXCLUDED_FROM_NARROW.includes(c.name));
             const top10 = nonLit.slice(0, 10);
             const othersSum = nonLit.slice(10).reduce((s, c) => s + c.cases, 0);
             const chartData = othersSum > 0 ? [...top10, {name: '其他', cases: othersSum}] : top10;
@@ -825,10 +830,10 @@
             });
         }
 
-        // Family non-litigation yearly trend (top 6 categories)
+        // Family non-litigation yearly trend (top 6 narrow categories - matching the 細類 doughnut)
         if (data.family_non_lit_yearly && data.family_non_lit_yearly.length > 0) {
-            const topCats = ['繼承非訟', '保護令聲請事件', '監護及輔助宣告', '其他事件', '親子非訟', '保護安置'];
-            const trendColors = [COLORS.purple, COLORS.red, COLORS.blue, COLORS.gray, COLORS.green, COLORS.orange];
+            const topCats = ['繼承非訟', '監護及輔助宣告', '親子非訟', '保護安置', '其他家事非訟', '收養'];
+            const trendColors = [COLORS.purple, COLORS.blue, COLORS.green, COLORS.orange, COLORS.pink, COLORS.teal];
 
             new Chart(document.getElementById('chartFamilyNonLitTrend'), {
                 type: 'line',
