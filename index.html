@@ -328,13 +328,25 @@
                     <div class="chart-title">刑事案件上訴維持率</div>
                     <div class="chart-container"><canvas id="chartCriminalAppeal"></canvas></div>
                 </div>
-                <div class="chart-card">
-                    <div class="chart-title">113 年刑事第一審完整罪名分布（年報）</div>
-                    <div class="chart-container"><canvas id="chartCrimeTypes"></canvas></div>
+                <div class="chart-card full">
+                    <div class="chart-title">① 普通刑法 vs 特別刑法 科刑人數歷年趨勢（2014-2024）</div>
+                    <div class="chart-container"><canvas id="chartCrimeCategoryTrend"></canvas></div>
                 </div>
-                <div class="chart-card">
-                    <div class="chart-title">主要罪名歷年趨勢</div>
-                    <div class="chart-container"><canvas id="chartCrimeTypeTrend"></canvas></div>
+                <div class="chart-card full">
+                    <div class="chart-title">② 普通刑法重點罪名歷年趨勢</div>
+                    <div class="chart-container"><canvas id="chartGeneralCrimeTrend"></canvas></div>
+                </div>
+                <div class="chart-card full">
+                    <div class="chart-title">普通刑法罪名分類說明（113 年科刑人數）</div>
+                    <div id="generalCrimeDesc" class="desc-grid"></div>
+                </div>
+                <div class="chart-card full">
+                    <div class="chart-title">③ 特別刑法重點罪名歷年趨勢</div>
+                    <div class="chart-container"><canvas id="chartSpecialCrimeTrend"></canvas></div>
+                </div>
+                <div class="chart-card full">
+                    <div class="chart-title">特別刑法罪名分類說明（113 年科刑人數）</div>
+                    <div id="specialCrimeDesc" class="desc-grid"></div>
                 </div>
             </div>
         </div>
@@ -1062,52 +1074,189 @@
             }
         });
 
-        // Full crime type distribution from annual report (doughnut)
-        if (data.full_crime_types && data.full_crime_types.length > 0) {
-            // Group: top 10 + others
-            const allCrimes = data.full_crime_types.filter(c => c.name !== '普通刑法計' && c.name !== '特別刑事法令計');
-            const top10 = allCrimes.slice(0, 10);
-            const othersSum = allCrimes.slice(10).reduce((s, c) => s + c.cases, 0);
-            const totalCases = allCrimes.reduce((s, c) => s + c.cases, 0);
-            const chartData = [...top10, {name: '其他罪名', cases: othersSum}];
-            const typeColors = [COLORS.red, COLORS.orange, COLORS.blue, COLORS.green, COLORS.purple, COLORS.teal, COLORS.pink, COLORS.yellow, COLORS.indigo, '#a0aec0', COLORS.gray];
+        // ===== 歷年罪名科刑人數（年報表73）=====
+        if (data.crime_yearly && data.crime_yearly.length > 0) {
+            const cy = data.crime_yearly;
+            const cyYears = cy.map(d => d.year_ad);
+            const firstCy = cy[0];
+            const lastCy = cy[cy.length - 1];
 
-            new Chart(document.getElementById('chartCrimeTypes'), {
-                type: 'doughnut',
+            // Chart 1: 普通刑法 vs 特別刑法 總量
+            new Chart(document.getElementById('chartCrimeCategoryTrend'), {
+                type: 'line',
                 data: {
-                    labels: chartData.map(c => c.name),
-                    datasets: [{ data: chartData.map(c => c.cases), backgroundColor: typeColors }]
+                    labels: cyYears,
+                    datasets: [
+                        { label: '合計', data: cy.map(d => d['合計']), borderColor: COLORS.gray, backgroundColor: COLORS_ALPHA(COLORS.gray, 0.1), tension: 0.3, pointRadius: 3 },
+                        { label: '普通刑法計', data: cy.map(d => d['普通刑法計']), borderColor: COLORS.red, backgroundColor: COLORS_ALPHA(COLORS.red, 0.1), tension: 0.3, pointRadius: 3 },
+                        { label: '特別刑事法計', data: cy.map(d => d['特別刑事法計']), borderColor: COLORS.orange, backgroundColor: COLORS_ALPHA(COLORS.orange, 0.1), tension: 0.3, pointRadius: 3 },
+                    ]
                 },
                 options: {
                     responsive: true, maintainAspectRatio: false,
-                    plugins: {
-                        legend: { position: 'right', labels: { font: { size: 11 } } },
-                        tooltip: { callbacks: { label: ctx => ctx.label + ': ' + formatNumber(ctx.raw) + ' 件 (' + (ctx.raw / totalCases * 100).toFixed(1) + '%)' } }
-                    }
+                    scales: { y: { ticks: { callback: v => formatNumber(v) }, title: { display: true, text: '科刑人數（人）' } } },
+                    plugins: { tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + formatNumber(ctx.raw) + ' 人' } } }
                 }
             });
 
-            // Crime type trend (monthly report data - top 4 named crimes)
-            const trendCrimes = ['公共危險罪', '特別刑法', '妨害秩序罪', '妨害公務罪'];
-            const trendColors = [COLORS.red, COLORS.orange, COLORS.blue, COLORS.purple];
-            new Chart(document.getElementById('chartCrimeTypeTrend'), {
+            // ===== 普通刑法趨勢 =====
+            const GENERAL_DESCRIPTIONS = {
+                '公共危險罪-不能安全駕駛': '俗稱酒駕罪，近年「酒駕零容忍」政策與刑度加重後人數大幅下降',
+                '竊盜罪-普通竊盜': '一般竊盜（未加重情節）',
+                '竊盜罪-加重竊盜': '攜帶兇器、結夥、夜間侵入住居等加重情節的竊盜',
+                '詐欺罪-一般詐欺': '一般詐欺取財、詐欺得利；近年受詐騙集團案件爆增影響',
+                '殺人罪-既遂': '故意殺人既遂',
+                '殺人罪-未遂': '故意殺人未遂',
+                '傷害罪-交通過失': '車禍肇事致人受傷的過失傷害（最大宗）',
+                '傷害罪-普通傷害': '故意傷害他人身體或健康',
+                '妨害自由-剝奪行動自由': '剝奪他人行動自由（妨害自由罪中最重）',
+                '妨害自由-強制罪': '以強暴脅迫使人行無義務之事',
+                '妨害自由-恐嚇危害安全': '恐嚇他人致生危害於安全',
+                '侵占罪-業務侵占': '因執行業務而持有他人之物予以侵占',
+                '毀棄損壞罪': '毀棄損壞他人物品',
+                '妨害公務罪': '對公務員依法執行職務施以強暴脅迫等',
+                '妨害秩序罪': '聚眾鬥毆、在公共場所聚眾施強暴等',
+            };
+
+            const generalCats = [
+                '公共危險罪-不能安全駕駛',
+                '竊盜罪-普通竊盜',
+                '詐欺罪-一般詐欺',
+                '傷害罪-交通過失',
+                '妨害自由-恐嚇危害安全',
+                '竊盜罪-加重竊盜',
+            ];
+            const generalColors = [COLORS.red, COLORS.blue, COLORS.orange, COLORS.green, COLORS.purple, COLORS.teal];
+            new Chart(document.getElementById('chartGeneralCrimeTrend'), {
                 type: 'line',
                 data: {
-                    labels: data.criminal_crime_types.map(d => d.year_ad),
-                    datasets: trendCrimes.map((type, i) => ({
-                        label: type,
-                        data: data.criminal_crime_types.map(d => d.types[type] || 0),
-                        borderColor: trendColors[i],
+                    labels: cyYears,
+                    datasets: generalCats.map((cat, i) => ({
+                        label: cat,
+                        data: cy.map(d => d[cat] || 0),
+                        borderColor: generalColors[i],
+                        backgroundColor: COLORS_ALPHA(generalColors[i], 0.1),
                         tension: 0.3,
                         pointRadius: 3,
                     }))
                 },
                 options: {
                     responsive: true, maintainAspectRatio: false,
-                    scales: { y: { ticks: { callback: v => formatNumber(v) } } },
-                    plugins: { tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + formatNumber(ctx.raw) + ' 件' } } }
+                    scales: { y: { ticks: { callback: v => formatNumber(v) }, title: { display: true, text: '科刑人數（人）' } } },
+                    plugins: { tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + formatNumber(ctx.raw) + ' 人' } } }
                 }
             });
+
+            // Description cards for 普通刑法
+            const genCatKeys = [
+                '公共危險罪-不能安全駕駛', '竊盜罪-普通竊盜', '詐欺罪-一般詐欺',
+                '傷害罪-交通過失', '竊盜罪-加重竊盜', '妨害自由-恐嚇危害安全',
+                '妨害自由-剝奪行動自由', '傷害罪-普通傷害', '公共危險罪-肇事逃逸',
+                '侵占罪-業務侵占', '毀棄損壞罪', '妨害公務罪', '妨害秩序罪',
+                '殺人罪-既遂', '殺人罪-未遂', '妨害自由-強制罪',
+            ];
+            const genEntries = genCatKeys
+                .map(k => ({ name: k, value: lastCy[k] || 0, firstValue: firstCy[k] || 0 }))
+                .filter(e => e.value > 0 || e.firstValue > 0)
+                .sort((a, b) => b.value - a.value);
+
+            const genTotal = genEntries.reduce((s, e) => s + e.value, 0);
+            const genHtml = genEntries.map((e, i) => {
+                const change = e.firstValue ? ((e.value - e.firstValue) / e.firstValue * 100) : 0;
+                const pct = (e.value / genTotal * 100).toFixed(1);
+                const changeClass = change >= 0 ? 'change-up' : 'change-down';
+                const changeSign = change >= 0 ? '+' : '';
+                const topClass = i < 3 ? `top-${i + 1}` : '';
+                const desc = GENERAL_DESCRIPTIONS[e.name] || '';
+                return `<div class="desc-item ${topClass}">
+                    <div class="desc-header">
+                        <span class="desc-name">${e.name}</span>
+                        <span class="desc-stats">${formatNumber(e.value)} 人 (${pct}%) <span class="${changeClass}">${changeSign}${change.toFixed(1)}%</span></span>
+                    </div>
+                    <div class="desc-text">${desc}</div>
+                </div>`;
+            }).join('');
+            document.getElementById('generalCrimeDesc').innerHTML = genHtml +
+                `<div style="grid-column: 1/-1; font-size: 11px; color: var(--text-light); margin-top: 4px;">變化率為 ${firstCy.year_ad} 年 → ${lastCy.year_ad} 年的 11 年累計變化（科刑人數）</div>`;
+
+            // ===== 特別刑法趨勢 =====
+            const SPECIAL_DESCRIPTIONS = {
+                '毒品-施用': '施用第一、二級毒品；110 年毒品條例修正後施用者多改行觀察勒戒，科刑人數大降',
+                '毒品-製造運輸販賣': '製造、運輸、販賣毒品（重罪）',
+                '毒品-其他': '其他毒品罪，如持有、轉讓等',
+                '違反洗錢防制法': '近年洗錢法大幅修正並擴及「車手」，人數從個位數暴增到萬人以上',
+                '違反家庭暴力防治法': '違反保護令罪為主',
+                '違反槍砲彈藥刀械': '非法持有、製造、販賣槍砲、刀械',
+                '違反兒少性剝削': '兒童及少年性剝削防制條例',
+                '違反商標法': '仿冒商標、販售仿冒品',
+                '違反著作權法': '盜版、重製、散布',
+                '違反銀行法': '非法吸金、地下金融',
+                '違反跟蹤騷擾防制法': '111 年 6 月施行的跟騷法，104 條為跟蹤騷擾行為罪',
+                '貪污治罪條例': '公務員貪污、收賄、圖利',
+                '妨害兵役治罪條例': '逃避兵役、妨害徵集等',
+            };
+
+            const specialCats = [
+                '毒品-施用',
+                '違反洗錢防制法',
+                '毒品-製造運輸販賣',
+                '違反家庭暴力防治法',
+                '違反槍砲彈藥刀械',
+                '違反兒少性剝削',
+            ];
+            const specialColors = [COLORS.red, COLORS.orange, COLORS.purple, COLORS.blue, COLORS.green, COLORS.teal];
+            new Chart(document.getElementById('chartSpecialCrimeTrend'), {
+                type: 'line',
+                data: {
+                    labels: cyYears,
+                    datasets: specialCats.map((cat, i) => ({
+                        label: cat,
+                        data: cy.map(d => d[cat] || 0),
+                        borderColor: specialColors[i],
+                        backgroundColor: COLORS_ALPHA(specialColors[i], 0.1),
+                        tension: 0.3,
+                        pointRadius: 3,
+                    }))
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    scales: { y: { ticks: { callback: v => formatNumber(v) }, title: { display: true, text: '科刑人數（人）' } } },
+                    plugins: { tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + formatNumber(ctx.raw) + ' 人' } } }
+                }
+            });
+
+            // Description cards for 特別刑法
+            const specCatKeys = [
+                '毒品-施用', '違反洗錢防制法', '毒品-製造運輸販賣', '毒品-其他',
+                '違反家庭暴力防治法', '違反槍砲彈藥刀械', '違反兒少性剝削',
+                '違反商標法', '違反著作權法', '違反銀行法',
+                '違反跟蹤騷擾防制法', '貪污治罪條例', '妨害兵役治罪條例',
+            ];
+            const specEntries = specCatKeys
+                .map(k => ({ name: k, value: lastCy[k] || 0, firstValue: firstCy[k] || 0 }))
+                .filter(e => e.value > 0 || e.firstValue > 0)
+                .sort((a, b) => b.value - a.value);
+
+            const specTotal = specEntries.reduce((s, e) => s + e.value, 0);
+            const specHtml = specEntries.map((e, i) => {
+                const change = e.firstValue > 0 ? ((e.value - e.firstValue) / e.firstValue * 100) : null;
+                const pct = (e.value / specTotal * 100).toFixed(1);
+                const changeClass = change !== null && change >= 0 ? 'change-up' : 'change-down';
+                const changeText = change !== null
+                    ? `<span class="${changeClass}">${change >= 0 ? '+' : ''}${change.toFixed(1)}%</span>`
+                    : `<span class="change-up">新法</span>`;
+                const topClass = i < 3 ? `top-${i + 1}` : '';
+                const desc = SPECIAL_DESCRIPTIONS[e.name] || '';
+                return `<div class="desc-item ${topClass}">
+                    <div class="desc-header">
+                        <span class="desc-name">${e.name}</span>
+                        <span class="desc-stats">${formatNumber(e.value)} 人 (${pct}%) ${changeText}</span>
+                    </div>
+                    <div class="desc-text">${desc}</div>
+                </div>`;
+            }).join('');
+            document.getElementById('specialCrimeDesc').innerHTML = specHtml +
+                `<div style="grid-column: 1/-1; font-size: 11px; color: var(--text-light); margin-top: 4px;">變化率為 ${firstCy.year_ad} 年 → ${lastCy.year_ad} 年的 11 年累計變化。「新法」表示該法律在統計期間內才生效（如跟騷法 111 年施行）</div>`;
         }
     }
 
