@@ -139,6 +139,47 @@
         .data-table .num { text-align: right; font-variant-numeric: tabular-nums; }
         .table-wrapper { max-height: 500px; overflow-y: auto; border-radius: 8px; border: 1px solid var(--border); }
 
+        /* Description grid */
+        .desc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 12px;
+        }
+        .desc-item {
+            background: #f7fafc;
+            border-left: 3px solid var(--blue);
+            border-radius: 6px;
+            padding: 12px 14px;
+        }
+        .desc-item .desc-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+        .desc-item .desc-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+        .desc-item .desc-stats {
+            font-size: 12px;
+            color: var(--text-light);
+            white-space: nowrap;
+            font-variant-numeric: tabular-nums;
+        }
+        .desc-item .desc-stats .change-up { color: var(--accent); font-weight: 600; }
+        .desc-item .desc-stats .change-down { color: var(--green); font-weight: 600; }
+        .desc-item .desc-text {
+            font-size: 12px;
+            color: var(--text);
+            line-height: 1.5;
+        }
+        .desc-item.top-1 { border-left-color: var(--purple); }
+        .desc-item.top-2 { border-left-color: var(--accent); }
+        .desc-item.top-3 { border-left-color: var(--accent-orange); }
+
         /* Source */
         .source {
             text-align: center;
@@ -245,25 +286,29 @@
                     <div class="chart-title">家事案件上訴維持率</div>
                     <div class="chart-container"><canvas id="chartFamilyAppeal"></canvas></div>
                 </div>
-                <div class="chart-card">
-                    <div class="chart-title">① 113 年家事事件按訴訟程序分類</div>
-                    <div class="chart-container"><canvas id="chartFamilyProcedure"></canvas></div>
-                </div>
-                <div class="chart-card">
-                    <div class="chart-title">家事事件訴訟程序歷年趨勢</div>
+                <div class="chart-card full">
+                    <div class="chart-title">① 家事事件訴訟程序歷年趨勢（2014-2024）</div>
                     <div class="chart-container"><canvas id="chartFamilyProcTrend"></canvas></div>
                 </div>
-                <div class="chart-card">
-                    <div class="chart-title">② 113 年「家事非訟事件」細項 drill-down（不含保護令/調解等）</div>
-                    <div class="chart-container"><canvas id="chartFamilyNonLit"></canvas></div>
+                <div class="chart-card full">
+                    <div class="chart-title">家事事件訴訟程序分類說明（113 年件數）</div>
+                    <div id="familyProcedureDesc" class="desc-grid"></div>
                 </div>
                 <div class="chart-card full">
-                    <div class="chart-title">家事非訟事件細項歷年趨勢（109-113 年）</div>
+                    <div class="chart-title">② 家事非訟事件細項歷年趨勢（2020-2024）</div>
                     <div class="chart-container"><canvas id="chartFamilyNonLitTrend"></canvas></div>
                 </div>
-                <div class="chart-card">
-                    <div class="chart-title">113 年離婚原因分布（年報）</div>
-                    <div class="chart-container"><canvas id="chartDivorceReasons"></canvas></div>
+                <div class="chart-card full">
+                    <div class="chart-title">家事非訟細項分類說明（113 年件數）</div>
+                    <div id="familyNonLitDesc" class="desc-grid"></div>
+                </div>
+                <div class="chart-card full">
+                    <div class="chart-title">③ 離婚原因歷年趨勢（2014-2024）</div>
+                    <div class="chart-container"><canvas id="chartDivorceTrend"></canvas></div>
+                </div>
+                <div class="chart-card full">
+                    <div class="chart-title">離婚原因分類說明（113 年件數，法定事由 + 其他）</div>
+                    <div id="divorceReasonsDesc" class="desc-grid"></div>
                 </div>
             </div>
         </div>
@@ -755,30 +800,27 @@
             }
         });
 
-        // Family procedure distribution (doughnut)
+        // ===== 家事事件訴訟程序歷年趨勢 =====
+        const PROC_DESCRIPTIONS = {
+            '家事非訟事件': '不採訴訟程序的家事案件，如繼承拋棄、監護宣告、收養認可、親權酌定等',
+            '保護令聲請': '依《家庭暴力防治法》聲請的通常／暫時／緊急保護令',
+            '調解程序': '家事事件的強制或任意調解，常見於離婚、子女監護、扶養費協議',
+            '第一審訴訟': '婚姻、親子、繼承等家事訴訟的第一審案件',
+            '其他事件': '其他家事相關事件',
+            '抗告': '對家事裁定不服而提起的抗告案件',
+            '公示催告': '宣告死亡等公示催告程序',
+            '第二審訴訟': '家事訴訟第二審上訴案件',
+        };
+
         if (data.family_by_procedure && data.family_by_procedure.length > 0) {
             const latestProc = data.family_by_procedure[data.family_by_procedure.length - 1];
+            const firstProc = data.family_by_procedure[0];
             const procEntries = Object.entries(latestProc)
                 .filter(([k]) => !['year_tw', 'year_ad', '合計'].includes(k))
                 .sort((a, b) => b[1] - a[1]);
             const procColors = [COLORS.purple, COLORS.red, COLORS.blue, COLORS.green, COLORS.orange, COLORS.teal, COLORS.pink, COLORS.yellow, COLORS.gray];
 
-            new Chart(document.getElementById('chartFamilyProcedure'), {
-                type: 'doughnut',
-                data: {
-                    labels: procEntries.map(([k]) => k),
-                    datasets: [{ data: procEntries.map(([, v]) => v), backgroundColor: procColors }]
-                },
-                options: {
-                    responsive: true, maintainAspectRatio: false,
-                    plugins: {
-                        legend: { position: 'right', labels: { font: { size: 11 } } },
-                        tooltip: { callbacks: { label: ctx => ctx.label + ': ' + formatNumber(ctx.raw) + ' 件 (' + (ctx.raw / latestProc['合計'] * 100).toFixed(1) + '%)' } }
-                    }
-                }
-            });
-
-            // Family procedure trend (top 5)
+            // Trend line chart (top 5)
             const topProcs = procEntries.slice(0, 5).map(([k]) => k);
             new Chart(document.getElementById('chartFamilyProcTrend'), {
                 type: 'line',
@@ -788,6 +830,7 @@
                         label: name,
                         data: data.family_by_procedure.map(d => d[name] || 0),
                         borderColor: procColors[i],
+                        backgroundColor: COLORS_ALPHA(procColors[i], 0.1),
                         tension: 0.3,
                         pointRadius: 3,
                     }))
@@ -798,39 +841,44 @@
                     plugins: { tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + formatNumber(ctx.raw) + ' 件' } } }
                 }
             });
+
+            // Description cards with 113 data
+            const total113 = latestProc['合計'];
+            const descHtml = procEntries.map(([name, value], i) => {
+                const firstValue = firstProc[name] || 0;
+                const change = firstValue ? ((value - firstValue) / firstValue * 100) : 0;
+                const pct = (value / total113 * 100).toFixed(1);
+                const changeClass = change >= 0 ? 'change-up' : 'change-down';
+                const changeSign = change >= 0 ? '+' : '';
+                const topClass = i < 3 ? `top-${i + 1}` : '';
+                const desc = PROC_DESCRIPTIONS[name] || '';
+                return `<div class="desc-item ${topClass}">
+                    <div class="desc-header">
+                        <span class="desc-name">${name}</span>
+                        <span class="desc-stats">${formatNumber(value)} 件 (${pct}%) <span class="${changeClass}">${changeSign}${change.toFixed(1)}%</span></span>
+                    </div>
+                    <div class="desc-text">${desc}</div>
+                </div>`;
+            }).join('');
+            document.getElementById('familyProcedureDesc').innerHTML = descHtml +
+                `<div style="grid-column: 1/-1; font-size: 11px; color: var(--text-light); margin-top: 4px;">變化率為 2014 年 → 2024 年的 11 年累計變化</div>`;
         }
 
-        // Family non-litigation (doughnut) - only show items that are within the "家事非訟事件" category
-        // in the procedure chart, to avoid double-counting with 保護令/調解/公示催告/其他
-        const EXCLUDED_FROM_NARROW = ['保護令聲請事件', '調解裁定', '公示催告', '夫妻財產制契約登記事項',
-                                       '共同財產制', '分別財產制', '履行勸告事件', '保全程序', '其他', '其他事件'];
-        if (data.family_non_litigation && data.family_non_litigation.length > 0) {
-            const nonLit = data.family_non_litigation
-                .filter(c => c.name !== '非訟事件計')
-                .filter(c => !EXCLUDED_FROM_NARROW.includes(c.name));
-            const top10 = nonLit.slice(0, 10);
-            const othersSum = nonLit.slice(10).reduce((s, c) => s + c.cases, 0);
-            const chartData = othersSum > 0 ? [...top10, {name: '其他', cases: othersSum}] : top10;
-            const totalNonLit = nonLit.reduce((s, c) => s + c.cases, 0);
-            const colors = [COLORS.purple, COLORS.red, COLORS.blue, COLORS.green, COLORS.orange, COLORS.teal, COLORS.pink, COLORS.yellow, COLORS.indigo, '#a0aec0', COLORS.gray];
+        // ===== 家事非訟事件細項歷年趨勢 =====
+        const NONLIT_DESCRIPTIONS = {
+            '繼承非訟': '遺產分割、拋棄繼承、限定繼承、遺囑提示等',
+            '監護及輔助宣告': '為心智障礙、失智長者聲請監護或輔助宣告',
+            '親子非訟': '酌定親權、改定親權、會面交往、扶養費等子女事件',
+            '收養': '收養認可、終止收養等',
+            '保護安置': '兒少保護安置裁定',
+            '暫時處分': '家事事件進行中的暫時處分',
+            '其他家事非訟': '上述以外的家事非訟事件',
+            '婚姻非訟': '夫妻同居、履行同居、扶養等',
+            '宣告死亡': '失蹤人宣告死亡事件',
+            '失蹤人財產管理': '失蹤人財產管理事件',
+            '精神衛生法聲請事件': '強制住院、強制社區治療等',
+        };
 
-            new Chart(document.getElementById('chartFamilyNonLit'), {
-                type: 'doughnut',
-                data: {
-                    labels: chartData.map(c => c.name),
-                    datasets: [{ data: chartData.map(c => c.cases), backgroundColor: colors }]
-                },
-                options: {
-                    responsive: true, maintainAspectRatio: false,
-                    plugins: {
-                        legend: { position: 'right', labels: { font: { size: 11 } } },
-                        tooltip: { callbacks: { label: ctx => ctx.label + ': ' + formatNumber(ctx.raw) + ' 件 (' + (ctx.raw / totalNonLit * 100).toFixed(1) + '%)' } }
-                    }
-                }
-            });
-        }
-
-        // Family non-litigation yearly trend (top 6 narrow categories - matching the 細類 doughnut)
         if (data.family_non_lit_yearly && data.family_non_lit_yearly.length > 0) {
             const topCats = ['繼承非訟', '監護及輔助宣告', '親子非訟', '保護安置', '其他家事非訟', '收養'];
             const trendColors = [COLORS.purple, COLORS.blue, COLORS.green, COLORS.orange, COLORS.pink, COLORS.teal];
@@ -854,42 +902,102 @@
                     plugins: { tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + formatNumber(ctx.raw) + ' 件' } } }
                 }
             });
+
+            // Description cards
+            const EXCLUDED = ['保護令聲請事件', '公示催告', '其他事件', '夫妻財產制契約登記事項', '分別財產制', '共同財產制', '履行勸告事件', '保全程序', '調解裁定'];
+            const firstYear = data.family_non_lit_yearly[0];
+            const lastYear = data.family_non_lit_yearly[data.family_non_lit_yearly.length - 1];
+            const narrowEntries = Object.entries(lastYear.categories)
+                .filter(([k]) => !EXCLUDED.includes(k))
+                .sort((a, b) => b[1] - a[1]);
+            const narrowTotal = narrowEntries.reduce((s, [, v]) => s + v, 0);
+
+            const nonLitHtml = narrowEntries.map(([name, value], i) => {
+                const firstValue = firstYear.categories[name] || 0;
+                const change = firstValue ? ((value - firstValue) / firstValue * 100) : 0;
+                const pct = (value / narrowTotal * 100).toFixed(1);
+                const changeClass = change >= 0 ? 'change-up' : 'change-down';
+                const changeSign = change >= 0 ? '+' : '';
+                const topClass = i < 3 ? `top-${i + 1}` : '';
+                const desc = NONLIT_DESCRIPTIONS[name] || '';
+                return `<div class="desc-item ${topClass}">
+                    <div class="desc-header">
+                        <span class="desc-name">${name}</span>
+                        <span class="desc-stats">${formatNumber(value)} 件 (${pct}%) <span class="${changeClass}">${changeSign}${change.toFixed(1)}%</span></span>
+                    </div>
+                    <div class="desc-text">${desc}</div>
+                </div>`;
+            }).join('');
+            document.getElementById('familyNonLitDesc').innerHTML = nonLitHtml +
+                `<div style="grid-column: 1/-1; font-size: 11px; color: var(--text-light); margin-top: 4px;">變化率為 ${firstYear.year_ad} 年 → ${lastYear.year_ad} 年的累計變化。佔比為狹義家事非訟小計</div>`;
         }
 
-        // Divorce reasons (bar - sorted)
-        if (data.divorce_reasons && data.divorce_reasons.length > 0) {
-            const latestDiv = data.divorce_reasons[data.divorce_reasons.length - 1];
-            const reasons = Object.entries(latestDiv)
-                .filter(([k]) => !['year_tw', 'year_ad', '合計'].includes(k))
-                .sort((a, b) => b[1] - a[1])
-                .filter(([, v]) => v > 0);
+        // ===== 離婚原因歷年趨勢 =====
+        const DIVORCE_DESCRIPTIONS = {
+            '其他重大事由難以維持婚姻': '民法 1052 條第 2 項概括條款，實務上最常引用',
+            '一方惡意遺棄他方': '一方長期不履行同居義務、離家不歸',
+            '受他方為不堪同居之虐待': '身體、精神虐待達到不堪同居程度',
+            '與配偶以外之人合意性交': '通姦（原刑法通姦罪 109 年除罪）',
+            '因故意犯罪判刑逾六個月': '故意犯罪經判處逾六個月徒刑確定',
+            '對他方直系親屬虐待': '虐待他方父母等直系尊親屬',
+            '有不治之惡疾或精神病': '不治之惡疾或重大精神病',
+            '意圖殺害他方': '以殺害配偶為目的',
+            '生死不明已逾三年': '配偶失蹤逾三年',
+            '重婚或成立748施行法第2條關係': '重婚或同性婚姻重複',
+        };
 
-            new Chart(document.getElementById('chartDivorceReasons'), {
-                type: 'bar',
+        if (data.divorce_reasons && data.divorce_reasons.length > 0) {
+            const firstDiv = data.divorce_reasons[0];
+            const lastDiv = data.divorce_reasons[data.divorce_reasons.length - 1];
+            const reasons = Object.entries(lastDiv)
+                .filter(([k]) => !['year_tw', 'year_ad', '合計'].includes(k))
+                .sort((a, b) => b[1] - a[1]);
+
+            // Trend chart - only show top 4 non-zero reasons (others are too small)
+            const topReasons = reasons.filter(([, v]) => v > 10).slice(0, 4).map(([k]) => k);
+            const trendColors = [COLORS.red, COLORS.orange, COLORS.blue, COLORS.purple];
+            new Chart(document.getElementById('chartDivorceTrend'), {
+                type: 'line',
                 data: {
-                    labels: reasons.map(([k]) => k.length > 18 ? k.substring(0, 18) + '...' : k),
-                    datasets: [{
-                        label: '件數',
-                        data: reasons.map(([, v]) => v),
-                        backgroundColor: COLORS_ALPHA(COLORS.red, 0.7),
-                        borderColor: COLORS.red,
-                        borderWidth: 1
-                    }]
+                    labels: data.divorce_reasons.map(d => d.year_ad),
+                    datasets: topReasons.map((name, i) => ({
+                        label: name.length > 16 ? name.substring(0, 16) + '…' : name,
+                        data: data.divorce_reasons.map(d => d[name] || 0),
+                        borderColor: trendColors[i],
+                        backgroundColor: COLORS_ALPHA(trendColors[i], 0.1),
+                        tension: 0.3,
+                        pointRadius: 3,
+                    }))
                 },
                 options: {
-                    indexAxis: 'y',
                     responsive: true, maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            callbacks: {
-                                title: ctx => reasons[ctx[0].dataIndex][0],
-                                label: ctx => formatNumber(ctx.raw) + ' 件 (' + (ctx.raw / latestDiv['合計'] * 100).toFixed(1) + '%)'
-                            }
-                        }
-                    }
+                    scales: { y: { ticks: { callback: v => formatNumber(v) } } },
+                    plugins: { tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + formatNumber(ctx.raw) + ' 件' } } }
                 }
             });
+
+            // Description cards
+            const divHtml = reasons.map(([name, value], i) => {
+                const firstValue = firstDiv[name] || 0;
+                const change = firstValue ? ((value - firstValue) / firstValue * 100) : (value > 0 ? 0 : 0);
+                const pct = (value / lastDiv['合計'] * 100).toFixed(1);
+                const changeClass = change >= 0 ? 'change-up' : 'change-down';
+                const changeSign = change >= 0 ? '+' : '';
+                const topClass = i < 3 ? `top-${i + 1}` : '';
+                const desc = DIVORCE_DESCRIPTIONS[name] || '';
+                const changeText = firstValue > 0
+                    ? `<span class="${changeClass}">${changeSign}${change.toFixed(1)}%</span>`
+                    : '—';
+                return `<div class="desc-item ${topClass}">
+                    <div class="desc-header">
+                        <span class="desc-name">${name}</span>
+                        <span class="desc-stats">${formatNumber(value)} 件 (${pct}%) ${changeText}</span>
+                    </div>
+                    <div class="desc-text">${desc}</div>
+                </div>`;
+            }).join('');
+            document.getElementById('divorceReasonsDesc').innerHTML = divHtml +
+                `<div style="grid-column: 1/-1; font-size: 11px; color: var(--text-light); margin-top: 4px;">變化率為 ${firstDiv.year_ad} 年 → ${lastDiv.year_ad} 年的 11 年累計變化</div>`;
         }
     }
 
