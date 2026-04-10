@@ -252,13 +252,13 @@
                     <div class="chart-title">民事案件平均結案天數</div>
                     <div class="chart-container"><canvas id="chartCivilDays"></canvas></div>
                 </div>
-                <div class="chart-card">
-                    <div class="chart-title">114 年民事第一審訴訟種類分布</div>
-                    <div class="chart-container"><canvas id="chartCivilTypes"></canvas></div>
-                </div>
-                <div class="chart-card">
-                    <div class="chart-title">民事主要訴訟種類歷年趨勢</div>
+                <div class="chart-card full">
+                    <div class="chart-title">民事第一審訴訟種類歷年趨勢（2015-2025）</div>
                     <div class="chart-container"><canvas id="chartCivilTypeTrend"></canvas></div>
+                </div>
+                <div class="chart-card full">
+                    <div class="chart-title">民事訴訟種類分類說明（114 年件數）</div>
+                    <div id="civilTypesDesc" class="desc-grid"></div>
                 </div>
             </div>
         </div>
@@ -688,38 +688,42 @@
             }
         });
 
-        // Civil case type distribution (doughnut)
+        // ===== 民事訴訟種類歷年趨勢 + 說明卡片 =====
+        const CIVIL_TYPE_DESCRIPTIONS = {
+            '損害賠償': '因他人侵權行為或違約請求損害賠償（最大宗，常見於車禍、工程、商業糾紛）',
+            '借貸': '消費借貸返還請求（民間借貸、公司借款等）',
+            '其他民法': '其他民法債權債務關係，例如不當得利、無因管理、保證等',
+            '特別法': '不屬於民法的特別法案件（如消保法、公寓大廈管理條例、勞基法等）',
+            '買賣': '買賣契約相關糾紛，例如瑕疵擔保、價金請求、交付標的物等',
+            '租賃': '租賃契約相關糾紛，例如租金、遷讓房屋、押金返還等',
+            '不當得利': '無法律上原因而受利益致他人受損害的返還請求',
+            '承攬': '承攬契約糾紛（工程承攬、修繕、製造物件等）',
+            '委任': '委任契約糾紛（律師費、代辦服務、報酬請求等）',
+            '僱傭': '僱傭契約糾紛（薪資、解僱等，部分屬勞基法案件則列特別法）',
+            '贈與': '贈與契約及撤銷贈與等',
+            '合夥': '合夥契約糾紛（出資、利益分配、退夥等）',
+            '旅遊': '旅遊契約糾紛',
+        };
+
         if (data.civil_case_types && data.civil_case_types.length > 0) {
-            const latestCivil = data.civil_case_types[data.civil_case_types.length - 1];
-            const sorted = Object.entries(latestCivil.types).sort((a, b) => b[1] - a[1]);
-            const typeColors = [COLORS.blue, COLORS.red, COLORS.orange, COLORS.green, COLORS.purple, COLORS.teal, COLORS.pink, COLORS.yellow, COLORS.indigo, COLORS.gray, '#a0aec0', '#cbd5e0', '#e2e8f0'];
+            const cct = data.civil_case_types;
+            const firstCct = cct[0];
+            const lastCct = cct[cct.length - 1];
+            const sorted = Object.entries(lastCct.types).sort((a, b) => b[1] - a[1]);
+            const totalCivil = lastCct.total;
 
-            new Chart(document.getElementById('chartCivilTypes'), {
-                type: 'doughnut',
-                data: {
-                    labels: sorted.map(([k]) => k),
-                    datasets: [{ data: sorted.map(([, v]) => v), backgroundColor: typeColors }]
-                },
-                options: {
-                    responsive: true, maintainAspectRatio: false,
-                    plugins: {
-                        legend: { position: 'right', labels: { font: { size: 11 } } },
-                        tooltip: { callbacks: { label: ctx => ctx.label + ': ' + formatNumber(ctx.raw) + ' 件 (' + (ctx.raw / latestCivil.total * 100).toFixed(1) + '%)' } }
-                    }
-                }
-            });
-
-            // Civil case type trend (top 5)
+            // Trend chart (top 5 categories)
             const topTypes = sorted.slice(0, 5).map(([k]) => k);
             const trendColors = [COLORS.blue, COLORS.red, COLORS.orange, COLORS.green, COLORS.purple];
             new Chart(document.getElementById('chartCivilTypeTrend'), {
                 type: 'line',
                 data: {
-                    labels: data.civil_case_types.map(d => d.year_ad),
+                    labels: cct.map(d => d.year_ad),
                     datasets: topTypes.map((type, i) => ({
                         label: type,
-                        data: data.civil_case_types.map(d => d.types[type] || 0),
+                        data: cct.map(d => d.types[type] || 0),
                         borderColor: trendColors[i],
+                        backgroundColor: COLORS_ALPHA(trendColors[i], 0.1),
                         tension: 0.3,
                         pointRadius: 3,
                     }))
@@ -730,6 +734,26 @@
                     plugins: { tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + formatNumber(ctx.raw) + ' 件' } } }
                 }
             });
+
+            // Description cards with 114 data + 11-year change
+            const civilHtml = sorted.map(([name, value], i) => {
+                const firstValue = firstCct.types[name] || 0;
+                const change = firstValue ? ((value - firstValue) / firstValue * 100) : 0;
+                const pct = (value / totalCivil * 100).toFixed(1);
+                const changeClass = change >= 0 ? 'change-up' : 'change-down';
+                const changeSign = change >= 0 ? '+' : '';
+                const topClass = i < 3 ? `top-${i + 1}` : '';
+                const desc = CIVIL_TYPE_DESCRIPTIONS[name] || '';
+                return `<div class="desc-item ${topClass}">
+                    <div class="desc-header">
+                        <span class="desc-name">${name}</span>
+                        <span class="desc-stats">${formatNumber(value)} 件 (${pct}%) <span class="${changeClass}">${changeSign}${change.toFixed(1)}%</span></span>
+                    </div>
+                    <div class="desc-text">${desc}</div>
+                </div>`;
+            }).join('');
+            document.getElementById('civilTypesDesc').innerHTML = civilHtml +
+                `<div style="grid-column: 1/-1; font-size: 11px; color: var(--text-light); margin-top: 4px;">變化率為 ${firstCct.year_ad} 年 → ${lastCct.year_ad} 年的 11 年累計變化。資料來源：司法院月報表 25 地方法院民事第一審終結事件訴訟種類</div>`;
         }
     }
 
