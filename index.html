@@ -257,6 +257,10 @@
                     <div class="chart-title">113 年家事非訟事件細類（年報）</div>
                     <div class="chart-container"><canvas id="chartFamilyNonLit"></canvas></div>
                 </div>
+                <div class="chart-card full">
+                    <div class="chart-title">家事非訟前 6 大細類歷年趨勢（109-113 年）</div>
+                    <div class="chart-container"><canvas id="chartFamilyNonLitTrend"></canvas></div>
+                </div>
                 <div class="chart-card">
                     <div class="chart-title">113 年離婚原因分布（年報）</div>
                     <div class="chart-container"><canvas id="chartDivorceReasons"></canvas></div>
@@ -817,6 +821,32 @@
                         legend: { position: 'right', labels: { font: { size: 11 } } },
                         tooltip: { callbacks: { label: ctx => ctx.label + ': ' + formatNumber(ctx.raw) + ' 件 (' + (ctx.raw / totalNonLit * 100).toFixed(1) + '%)' } }
                     }
+                }
+            });
+        }
+
+        // Family non-litigation yearly trend (top 6 categories)
+        if (data.family_non_lit_yearly && data.family_non_lit_yearly.length > 0) {
+            const topCats = ['繼承非訟', '保護令聲請事件', '監護及輔助宣告', '其他事件', '親子非訟', '保護安置'];
+            const trendColors = [COLORS.purple, COLORS.red, COLORS.blue, COLORS.gray, COLORS.green, COLORS.orange];
+
+            new Chart(document.getElementById('chartFamilyNonLitTrend'), {
+                type: 'line',
+                data: {
+                    labels: data.family_non_lit_yearly.map(d => d.year_ad),
+                    datasets: topCats.map((cat, i) => ({
+                        label: cat,
+                        data: data.family_non_lit_yearly.map(d => d.categories[cat] || 0),
+                        borderColor: trendColors[i],
+                        backgroundColor: COLORS_ALPHA(trendColors[i], 0.1),
+                        tension: 0.3,
+                        pointRadius: 4,
+                    }))
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    scales: { y: { ticks: { callback: v => formatNumber(v) } } },
+                    plugins: { tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + formatNumber(ctx.raw) + ' 件' } } }
                 }
             });
         }
