@@ -487,6 +487,9 @@
         const latestEnf = data.enforcement_by_year[data.enforcement_by_year.length - 1];
         const prevEnf = data.enforcement_by_year[data.enforcement_by_year.length - 2];
         const enfGrowth = ((latestEnf.newly_lodged - prevEnf.newly_lodged) / prevEnf.newly_lodged * 100).toFixed(1);
+        const latestFam = data.family_by_year[data.family_by_year.length - 1];
+        const prevFam = data.family_by_year[data.family_by_year.length - 2];
+        const famGrowth = ((latestFam.newly_lodged - prevFam.newly_lodged) / prevFam.newly_lodged * 100).toFixed(1);
 
         const html = `
             <div class="kpi-card">
@@ -503,6 +506,13 @@
                     較前年 ${latest.civil > prev.civil ? '↑' : '↓'} ${Math.abs(((latest.civil - prev.civil) / prev.civil * 100)).toFixed(1)}%
                 </div>
             </div>
+            <div class="kpi-card purple">
+                <div class="kpi-label">家事案件新收</div>
+                <div class="kpi-value">${formatNumber(latestFam.newly_lodged)}</div>
+                <div class="kpi-change ${parseFloat(famGrowth) > 0 ? 'up' : 'down'}">
+                    較前年 ${parseFloat(famGrowth) > 0 ? '↑' : '↓'} ${Math.abs(famGrowth)}%
+                </div>
+            </div>
             <div class="kpi-card green">
                 <div class="kpi-label">刑事案件新收</div>
                 <div class="kpi-value">${formatNumber(latest.criminal)}</div>
@@ -515,13 +525,6 @@
                 <div class="kpi-value">${formatNumber(latestEnf.newly_lodged)}</div>
                 <div class="kpi-change ${parseFloat(enfGrowth) > 0 ? 'up' : 'down'}">
                     較前年 ${parseFloat(enfGrowth) > 0 ? '↑' : '↓'} ${Math.abs(enfGrowth)}%
-                </div>
-            </div>
-            <div class="kpi-card purple">
-                <div class="kpi-label">強制執行未結</div>
-                <div class="kpi-value">${formatNumber(latestEnf.pending_cases)}</div>
-                <div class="kpi-change up">
-                    平均結案 ${latestEnf.avg_days_to_close} 天
                 </div>
             </div>
         `;
