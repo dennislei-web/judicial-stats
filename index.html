@@ -180,6 +180,140 @@
         .desc-item.top-2 { border-left-color: var(--accent); }
         .desc-item.top-3 { border-left-color: var(--accent-orange); }
 
+        /* Analysis article */
+        .analysis-article {
+            background: linear-gradient(135deg, #fefefe 0%, #f8fafc 100%);
+            border-radius: 12px;
+            padding: 32px 40px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            line-height: 1.9;
+            color: #2d3748;
+            font-size: 15px;
+        }
+        .analysis-article .article-header {
+            border-bottom: 3px solid var(--primary);
+            padding-bottom: 16px;
+            margin-bottom: 24px;
+        }
+        .analysis-article .article-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 6px;
+        }
+        .analysis-article .article-subtitle {
+            font-size: 13px;
+            color: var(--text-light);
+        }
+        .analysis-article h2 {
+            font-size: 19px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-top: 32px;
+            margin-bottom: 12px;
+            padding-left: 12px;
+            border-left: 5px solid var(--accent);
+        }
+        .analysis-article h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--primary-light);
+            margin-top: 20px;
+            margin-bottom: 8px;
+        }
+        .analysis-article p {
+            margin-bottom: 14px;
+            text-align: justify;
+        }
+        .analysis-article .highlight {
+            background: linear-gradient(180deg, transparent 60%, #fef3c7 60%);
+            padding: 0 2px;
+            font-weight: 600;
+        }
+        .analysis-article .stat-inline {
+            font-weight: 600;
+            color: var(--accent);
+            font-variant-numeric: tabular-nums;
+        }
+        .analysis-article .stat-down {
+            font-weight: 600;
+            color: var(--green);
+            font-variant-numeric: tabular-nums;
+        }
+        .analysis-article .insight-box {
+            background: #f0f9ff;
+            border-left: 4px solid var(--blue);
+            border-radius: 6px;
+            padding: 14px 18px;
+            margin: 16px 0;
+            font-size: 14px;
+        }
+        .analysis-article .insight-box strong {
+            color: var(--blue);
+        }
+        .analysis-article .warning-box {
+            background: #fef2f2;
+            border-left: 4px solid var(--accent);
+            border-radius: 6px;
+            padding: 14px 18px;
+            margin: 16px 0;
+            font-size: 14px;
+        }
+        .analysis-article .warning-box strong {
+            color: var(--accent);
+        }
+        .analysis-article ul, .analysis-article ol {
+            margin: 12px 0 14px 24px;
+        }
+        .analysis-article ul li, .analysis-article ol li {
+            margin-bottom: 6px;
+        }
+        .analysis-article table.article-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+            font-size: 13px;
+        }
+        .analysis-article table.article-table th {
+            background: var(--primary);
+            color: white;
+            padding: 8px 12px;
+            text-align: left;
+            font-weight: 500;
+        }
+        .analysis-article table.article-table td {
+            padding: 7px 12px;
+            border-bottom: 1px solid var(--border);
+            font-variant-numeric: tabular-nums;
+        }
+        .analysis-article table.article-table tr:hover { background: #f0f4ff; }
+        .analysis-article .takeaway {
+            background: linear-gradient(135deg, #1a365d 0%, #2a4a7f 100%);
+            color: white;
+            padding: 20px 24px;
+            border-radius: 10px;
+            margin-top: 24px;
+        }
+        .analysis-article .takeaway h3 {
+            color: #ffd700;
+            margin-top: 0;
+            font-size: 17px;
+        }
+        .analysis-article .takeaway p {
+            color: #e8eef7;
+        }
+        .analysis-article .ai-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+
         /* Source */
         .source {
             text-align: center;
@@ -259,6 +393,124 @@
                 <div class="chart-card full">
                     <div class="chart-title">民事訴訟種類分類說明（114 年件數）</div>
                     <div id="civilTypesDesc" class="desc-grid"></div>
+                </div>
+
+                <!-- 民事案件深度分析文章 -->
+                <div class="analysis-article">
+                    <div class="article-header">
+                        <div class="article-title">民事案件深度分析：十年來的社會訊號 <span class="ai-badge">AI 洞察</span></div>
+                        <div class="article-subtitle">資料期間：2015-2025 年｜資料來源：司法院統計月報 + 年報｜分析範圍：地方法院民事第一審及訴訟種類</div>
+                    </div>
+
+                    <h2>一、十年總覽：量能失衡的警訊</h2>
+                    <p>從 2015 到 2025 年，地方法院民事案件的新收量從 <span class="stat-inline">232.7 萬件</span> 成長到 <span class="stat-inline">339.9 萬件</span>，十年累計 <span class="highlight">+46.1%</span>。乍看之下只是穩定成長，但把「結案速度」和「未結庫存」一起看，真相就不一樣了：</p>
+
+                    <table class="article-table">
+                        <tr><th>年度</th><th>新收</th><th>結案</th><th>未結庫存</th><th>平均結案天數</th></tr>
+                        <tr><td>2015</td><td>2,327,093</td><td>2,325,681</td><td>139,680</td><td>32.6 天</td></tr>
+                        <tr><td>2019</td><td>2,570,608</td><td>2,562,005</td><td>171,787</td><td>34.3 天</td></tr>
+                        <tr><td>2022</td><td>2,894,372</td><td>2,876,460</td><td>203,143</td><td>32.5 天</td></tr>
+                        <tr><td>2023</td><td>3,146,973</td><td>3,076,118</td><td><strong>273,998</strong></td><td>34.0 天</td></tr>
+                        <tr><td>2024</td><td>3,412,227</td><td>3,281,527</td><td><strong>404,698</strong></td><td><strong>42.2 天</strong></td></tr>
+                        <tr><td>2025</td><td>3,399,055</td><td>3,449,013</td><td>354,740</td><td><strong>53.8 天</strong></td></tr>
+                    </table>
+
+                    <div class="warning-box">
+                        <strong>⚠ 2024 年是明顯的拐點。</strong>未結庫存從 2022 年的 20 萬件一路跳到 2024 年的 <span class="stat-inline">40.5 萬件（+99%）</span>，平均結案天數從長年穩定的 32-34 天暴衝到 <span class="stat-inline">53.8 天（2025）</span>。也就是說，**短短兩年內司法系統處理民事案件的速度變慢了 60%**，這不是漸進變化，是結構性失速。
+                    </div>
+
+                    <p>法官的工作負擔也出現矛盾：每位法官月均結案件數從 2015 年的 25.1 件上升到 2019-2020 的 30.5 件高點後，2024-2025 又回落到 27-28 件。換句話說，<span class="highlight">法官不是「不願結案」，而是「結不動了」</span>——案件複雜度、文書量、和當事人協商時間都在增加，單位時間內能處理的案件自然變少。</p>
+
+                    <h2>二、訴訟種類的結構性翻轉</h2>
+                    <p>十年來最劇烈的變化不在總量，而在「人們為什麼上法院」的根本轉變。2015 年時，借貸糾紛是民事第一審的最大宗（5.1 萬件），損害賠償只有 2.4 萬件。但到了 2025 年，局勢完全逆轉：</p>
+
+                    <table class="article-table">
+                        <tr><th>訴訟種類</th><th>2015</th><th>2019（借貸峰值）</th><th>2025</th><th>十年變化</th></tr>
+                        <tr><td><strong>損害賠償</strong></td><td>24,261</td><td>34,975</td><td><strong>71,784</strong></td><td class="stat-inline">+195.9%</td></tr>
+                        <tr><td><strong>借貸</strong></td><td>51,231</td><td><strong>85,036</strong></td><td>39,508</td><td class="stat-down">−22.9%</td></tr>
+                        <tr><td>買賣</td><td>5,670</td><td>6,093</td><td>8,370</td><td>+47.6%</td></tr>
+                        <tr><td>不當得利</td><td>2,187</td><td>2,625</td><td>3,477</td><td>+59.0%</td></tr>
+                        <tr><td>承攬</td><td>2,877</td><td>2,874</td><td>2,860</td><td>持平</td></tr>
+                        <tr><td>特別法</td><td>23,606</td><td>22,379</td><td>23,543</td><td>持平</td></tr>
+                    </table>
+
+                    <h3>2.1　借貸案件為何「先升後跌」？</h3>
+                    <p>借貸訴訟在 2019 年衝上 8.5 萬件的歷史高點，之後連續六年下滑到 3.95 萬件，十年淨減 1.2 萬件。幾個可能的結構性因素：</p>
+                    <ul>
+                        <li><strong>消費金融環境改變</strong>：銀行消費信貸、信用卡、P2P 平台、行動支付興起，取代傳統民間借貸。正式管道借錢不需要上法院要債。</li>
+                        <li><strong>2019 高峰可能是 2008 金融海嘯後卡債族的尾聲</strong>：2015-2019 剛好是個人再生、消債條例相關案件集中清算的期間。</li>
+                        <li><strong>本票裁定改走「非訟」程序</strong>：許多小額借貸糾紛先走支付命令或本票裁定，能直接取得執行名義，不必進入訴訟程序。</li>
+                    </ul>
+
+                    <h3>2.2　損害賠償為何「直線上升」？</h3>
+                    <p>損害賠償從 2015 年的 2.4 萬件一路長到 2025 年的 <span class="stat-inline">7.2 萬件</span>，幾乎是三倍，而且沒有任何一年下跌。這是最具社會意義的信號：</p>
+                    <div class="insight-box">
+                        <strong>💡 社會觀察：</strong>損害賠償的成長反映三個並行的現象——<br>
+                        ① <strong>交通事故訴訟化</strong>：車禍民事請求從過去的調解、和解為主，越來越多當事人直接走訴訟。刑事追訴門檻提高（過失傷害需告訴）之後，民事損賠成為主要的求償管道。<br>
+                        ② <strong>工程糾紛爆量</strong>：2019 年後台灣公共工程、都更、住宅建案激增，工程瑕疵、逾期罰款、工程款爭議進入法院。<br>
+                        ③ <strong>網路名譽權、隱私權訴訟興起</strong>：社群媒體時代，個人名譽/隱私被侵害的民事賠償請求越來越多。
+                    </div>
+
+                    <h3>2.3　關鍵交叉點：2023 年</h3>
+                    <p>2023 年是歷史性的一年：<span class="highlight">損害賠償首次超越借貸</span>（55,233 vs 51,987），成為民事第一審最大宗的訴訟類型。這象徵台灣民事糾紛的性質從「債權債務」轉向「權利意識型糾紛」，人們更願意為「不合理的損害」走上法庭。</p>
+
+                    <h2>三、上訴維持率連年下滑的隱憂</h2>
+                    <p>上訴維持率（即第一審裁判在上訴審被維持的比率）從 2015 年的 <span class="stat-inline">40.5%</span> 一路下滑到 2025 年的 <span class="stat-inline">30.8%</span>，十年下降 10 個百分點。相對的，抗告維持率（程序性裁定的維持率）在 85% 左右極為穩定。</p>
+
+                    <table class="article-table">
+                        <tr><th>年度</th><th>上訴維持率</th><th>抗告維持率</th></tr>
+                        <tr><td>2015</td><td>40.52%</td><td>86.07%</td></tr>
+                        <tr><td>2020</td><td>43.83%</td><td>85.36%</td></tr>
+                        <tr><td>2022</td><td>44.25%</td><td>84.90%</td></tr>
+                        <tr><td>2023</td><td>35.28%</td><td>85.61%</td></tr>
+                        <tr><td>2024</td><td>32.53%</td><td>85.56%</td></tr>
+                        <tr><td>2025</td><td><strong>30.78%</strong></td><td>85.84%</td></tr>
+                    </table>
+
+                    <div class="insight-box">
+                        <strong>💡 這代表什麼？</strong>同樣的法官、同樣的上訴審，為什麼判決被推翻的機率愈來愈高？三種可能的解釋：<br>
+                        ① <strong>案件複雜度超越第一審資訊處理能力</strong>：跨境、數位證據、新興科技相關案件，第一審法官接觸的時間短、資料量大，事實認定難以一次到位。<br>
+                        ② <strong>第一審「結案壓力」導致裁判品質下降</strong>：2024 結案天數爆增、未結量激增的同時，維持率驟降，可能不是巧合。<br>
+                        ③ <strong>上訴審的審查標準變嚴</strong>：面對外界對司法品質的質疑，高等審可能主動加強實質審查。
+                    </div>
+
+                    <p>無論原因為何，對當事人的啟示是明確的：<span class="highlight">以 2025 年的資料，民事案件上訴有將近 70% 的機率在二審被改判或廢棄</span>。對律師來說，即使第一審敗訴，上訴的實際勝率比過去更高；對第一審策略的重要性反而是下降的。</p>
+
+                    <h2>四、區域差距：城鄉「訴訟時間」的 2 倍落差</h2>
+                    <p>114 年各地方法院的民事案件新收量與結案速度呈現明顯的城鄉差距：</p>
+
+                    <table class="article-table">
+                        <tr><th>類型</th><th>法院</th><th>114 年新收件數</th><th>平均結案天數</th></tr>
+                        <tr><td rowspan="6">六大都會</td><td>臺北地院</td><td>472,371</td><td>33.4 天</td></tr>
+                        <tr><td>臺中地院</td><td>381,231</td><td>31.5 天</td></tr>
+                        <tr><td>新北地院</td><td>370,659</td><td>33.3 天</td></tr>
+                        <tr><td>桃園地院</td><td>285,458</td><td>32.0 天</td></tr>
+                        <tr><td>臺南地院</td><td>278,167</td><td>25.5 天</td></tr>
+                        <tr><td>高雄地院</td><td>264,626</td><td>27.2 天</td></tr>
+                        <tr><td rowspan="4">中小型</td><td>嘉義地院</td><td>107,642</td><td><strong>18.4 天</strong></td></tr>
+                        <tr><td>雲林地院</td><td>87,047</td><td><strong>19.2 天</strong></td></tr>
+                        <tr><td>屏東地院</td><td>132,019</td><td><strong>20.0 天</strong></td></tr>
+                        <tr><td>苗栗地院</td><td>68,705</td><td><strong>20.0 天</strong></td></tr>
+                    </table>
+
+                    <p>六大都會法院的平均結案天數集中在 <span class="stat-inline">25-34 天</span>，而嘉義、雲林、屏東、苗栗等中小型法院只要 <span class="stat-inline">18-20 天</span>。<span class="highlight">同樣一件民事訴訟，在臺北打和在嘉義打，可能相差 2 倍的時間成本</span>。這不只是法官多寡的問題——都會案件的複雜度、當事人律師配置、專家證人需求都更高。</p>
+
+                    <p>此外，單就臺北地院一院，114 年的新收量就達 47.2 萬件，占全國地方法院民事案件的 <span class="stat-inline">13.9%</span>，是名符其實的「全國民事第一大院」。若加上新北、士林（位於臺北都會圈），光是大臺北地區就消化了全國約 31% 的民事案件。</p>
+
+                    <h2>五、關鍵洞察總結</h2>
+
+                    <div class="takeaway">
+                        <h3>📊 十年民事案件的五大發現</h3>
+                        <p><strong>1. 系統壓力臨界點已到：</strong>2024 年是結構性失速的拐點，結案天數暴增 60%、未結庫存倍增。民事案件量能的擴張速度，已超越司法系統的消化能力。</p>
+                        <p><strong>2. 糾紛本質從「還錢」轉向「求償」：</strong>損害賠償 10 年成長 196%，借貸下降 23%。台灣民事訴訟正從債權回收為主的時代，進入權利意識型糾紛的新階段。</p>
+                        <p><strong>3. 第一審裁判的「可靠度」正在下降：</strong>上訴維持率從 40% 跌到 31%，意味著 70% 的民事案件到二審還有翻盤機會。這對當事人與律師的訴訟策略都是關鍵變數。</p>
+                        <p><strong>4. 司法資源分配極不平均：</strong>臺北地院一院承擔全國 14% 的民事案件；大臺北地區承擔 31%。六大都會與偏鄉的結案速度相差 2 倍。</p>
+                        <p><strong>5. 2019 年是民間借貸的分水嶺：</strong>之前是成長期、之後是下降期。這很可能和消費金融管道多元化、卡債集中清算結束有關，是一個值得律師和金融業持續關注的結構性信號。</p>
+                    </div>
+
+                    <p style="margin-top: 20px; font-size: 12px; color: var(--text-light); text-align: center;">
+                        本分析由 Claude AI 根據司法院公開統計資料自動生成，僅供參考。如有法律決策需求，請諮詢執業律師。
+                    </p>
                 </div>
             </div>
         </div>
