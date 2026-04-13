@@ -1185,16 +1185,20 @@
     function buildOverviewCharts(data) {
         const years = data.cases_by_year.map(d => d.year_ad);
 
-        // Total trend - stacked area
+        // Total trend - stacked bar (split civil into pure civil + family)
+        const familyByYear = {};
+        if (data.family_by_year) data.family_by_year.forEach(f => { familyByYear[f.year_ad] = f.newly_lodged; });
+
         new Chart(document.getElementById('chartTotalTrend'), {
             type: 'bar',
             data: {
                 labels: years,
                 datasets: [
-                    { label: '民事', data: data.cases_by_year.map(d => d.civil), backgroundColor: COLORS.blue, stack: 'stack' },
+                    { label: '民事（不含家事）', data: data.cases_by_year.map(d => d.civil - (familyByYear[d.year_ad] || 0)), backgroundColor: COLORS.blue, stack: 'stack' },
+                    { label: '家事', data: data.cases_by_year.map(d => familyByYear[d.year_ad] || 0), backgroundColor: COLORS.purple, stack: 'stack' },
                     { label: '刑事', data: data.cases_by_year.map(d => d.criminal), backgroundColor: COLORS.red, stack: 'stack' },
                     { label: '強制執行', data: data.cases_by_year.map(d => d.enforcement), backgroundColor: COLORS.orange, stack: 'stack' },
-                    { label: '行政訴訟', data: data.cases_by_year.map(d => d.administrative), backgroundColor: COLORS.purple, stack: 'stack' },
+                    { label: '行政訴訟', data: data.cases_by_year.map(d => d.administrative), backgroundColor: COLORS.teal, stack: 'stack' },
                     { label: '其他', data: data.cases_by_year.map(d => d.total - d.civil - d.criminal - d.enforcement - d.administrative), backgroundColor: COLORS.gray, stack: 'stack' },
                 ]
             },
@@ -1210,19 +1214,21 @@
             }
         });
 
-        // Type distribution - doughnut
+        // Type distribution - doughnut (split civil into pure civil + family)
         const latest = data.cases_by_year[data.cases_by_year.length - 1];
+        const latestFamily = familyByYear[latest.year_ad] || 0;
+        const civilOnly = latest.civil - latestFamily;
         new Chart(document.getElementById('chartTypeDistribution'), {
             type: 'doughnut',
             data: {
-                labels: ['民事', '刑事', '強制執行', '行政訴訟', '公證', '提存', '其他'],
+                labels: ['民事（不含家事）', '家事', '刑事', '強制執行', '行政訴訟', '公證', '提存', '其他'],
                 datasets: [{
                     data: [
-                        latest.civil, latest.criminal, latest.enforcement, latest.administrative,
+                        civilOnly, latestFamily, latest.criminal, latest.enforcement, latest.administrative,
                         latest.notarization, latest.lodgment,
                         latest.total - latest.civil - latest.criminal - latest.enforcement - latest.administrative - latest.notarization - latest.lodgment
                     ],
-                    backgroundColor: [COLORS.blue, COLORS.red, COLORS.orange, COLORS.purple, COLORS.teal, COLORS.pink, COLORS.gray]
+                    backgroundColor: [COLORS.blue, COLORS.purple, COLORS.red, COLORS.orange, COLORS.teal, COLORS.pink, COLORS.yellow, COLORS.gray]
                 }]
             },
             options: {
