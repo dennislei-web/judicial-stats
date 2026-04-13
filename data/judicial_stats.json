@@ -2,7 +2,7 @@
   "metadata": {
     "source": "司法院統計月報 114年12月",
     "url": "https://www.judicial.gov.tw/tw/lp-2389-1.html",
-    "generated": "2026-04-10T17:37:40.185563"
+    "generated": "2026-04-10T18:45:34.062271"
   },
   "cases_by_year": [
     {
@@ -647,8 +647,9 @@
       "pending_cases": 139680,
       "avg_days_to_close": 32.59,
       "avg_cases_per_judge": 25.14,
-      "appeal_affirmed_rate": 40.52,
-      "ruling_affirmed_rate": 86.07
+      "avg_cases_per_judge_nonlit": 40.52,
+      "appeal_affirmed_rate": 86.07,
+      "ruling_affirmed_rate": 87.37
     },
     {
       "year_tw": 105,
@@ -660,8 +661,9 @@
       "pending_cases": 146888,
       "avg_days_to_close": 31.35,
       "avg_cases_per_judge": 25.64,
-      "appeal_affirmed_rate": 40.41,
-      "ruling_affirmed_rate": 85.57
+      "avg_cases_per_judge_nonlit": 40.41,
+      "appeal_affirmed_rate": 85.57,
+      "ruling_affirmed_rate": 88.07
     },
     {
       "year_tw": 106,
@@ -673,8 +675,9 @@
       "pending_cases": 156098,
       "avg_days_to_close": 33.13,
       "avg_cases_per_judge": 26.63,
-      "appeal_affirmed_rate": 41.28,
-      "ruling_affirmed_rate": 85.29
+      "avg_cases_per_judge_nonlit": 41.28,
+      "appeal_affirmed_rate": 85.29,
+      "ruling_affirmed_rate": 86.43
     },
     {
       "year_tw": 107,
@@ -686,8 +689,9 @@
       "pending_cases": 163184,
       "avg_days_to_close": 34.41,
       "avg_cases_per_judge": 28.0,
-      "appeal_affirmed_rate": 40.29,
-      "ruling_affirmed_rate": 84.96
+      "avg_cases_per_judge_nonlit": 40.29,
+      "appeal_affirmed_rate": 84.96,
+      "ruling_affirmed_rate": 85.54
     },
     {
       "year_tw": 108,
@@ -699,8 +703,9 @@
       "pending_cases": 171787,
       "avg_days_to_close": 34.25,
       "avg_cases_per_judge": 30.54,
-      "appeal_affirmed_rate": 40.93,
-      "ruling_affirmed_rate": 85.0
+      "avg_cases_per_judge_nonlit": 40.93,
+      "appeal_affirmed_rate": 85.0,
+      "ruling_affirmed_rate": 84.63
     },
     {
       "year_tw": 109,
@@ -712,8 +717,9 @@
       "pending_cases": 169453,
       "avg_days_to_close": 33.37,
       "avg_cases_per_judge": 30.54,
-      "appeal_affirmed_rate": 43.83,
-      "ruling_affirmed_rate": 85.36
+      "avg_cases_per_judge_nonlit": 43.83,
+      "appeal_affirmed_rate": 85.36,
+      "ruling_affirmed_rate": 84.75
     },
     {
       "year_tw": 110,
@@ -725,8 +731,9 @@
       "pending_cases": 185231,
       "avg_days_to_close": 33.34,
       "avg_cases_per_judge": 27.76,
-      "appeal_affirmed_rate": 40.96,
-      "ruling_affirmed_rate": 85.12
+      "avg_cases_per_judge_nonlit": 40.96,
+      "appeal_affirmed_rate": 85.12,
+      "ruling_affirmed_rate": 84.18
     },
     {
       "year_tw": 111,
@@ -738,7 +745,8 @@
       "pending_cases": 203143,
       "avg_days_to_close": 32.53,
       "avg_cases_per_judge": 30.1,
-      "appeal_affirmed_rate": 44.25,
+      "avg_cases_per_judge_nonlit": 44.25,
+      "appeal_affirmed_rate": 84.9,
       "ruling_affirmed_rate": 84.9
     },
     {
@@ -751,8 +759,9 @@
       "pending_cases": 273998,
       "avg_days_to_close": 33.95,
       "avg_cases_per_judge": 29.54,
-      "appeal_affirmed_rate": 35.28,
-      "ruling_affirmed_rate": 85.61
+      "avg_cases_per_judge_nonlit": 35.28,
+      "appeal_affirmed_rate": 85.61,
+      "ruling_affirmed_rate": 84.86
     },
     {
       "year_tw": 113,
@@ -764,8 +773,9 @@
       "pending_cases": 404698,
       "avg_days_to_close": 42.15,
       "avg_cases_per_judge": 27.44,
-      "appeal_affirmed_rate": 32.53,
-      "ruling_affirmed_rate": 85.56
+      "avg_cases_per_judge_nonlit": 32.53,
+      "appeal_affirmed_rate": 85.56,
+      "ruling_affirmed_rate": 85.15
     },
     {
       "year_tw": 114,
@@ -777,8 +787,9 @@
       "pending_cases": 354740,
       "avg_days_to_close": 53.77,
       "avg_cases_per_judge": 27.78,
-      "appeal_affirmed_rate": 30.78,
-      "ruling_affirmed_rate": 85.84
+      "avg_cases_per_judge_nonlit": 30.78,
+      "appeal_affirmed_rate": 85.84,
+      "ruling_affirmed_rate": 84.98
     }
   ],
   "district_criminal_by_year": [
@@ -1490,6 +1501,186 @@
       "cases_closed": 2089613,
       "pending_cases": 207499,
       "avg_days_to_close": 46.41
+    }
+  ],
+  "supreme_civil_appeal": [
+    {
+      "year_tw": 104,
+      "year_ad": 2015,
+      "total": 2676,
+      "appeal_rejected": 1835,
+      "judgment_voided": 529,
+      "third_instance_maintain_rate": 75.49
+    },
+    {
+      "year_tw": 105,
+      "year_ad": 2016,
+      "total": 2526,
+      "appeal_rejected": 1840,
+      "judgment_voided": 446,
+      "third_instance_maintain_rate": 78.62
+    },
+    {
+      "year_tw": 106,
+      "year_ad": 2017,
+      "total": 2631,
+      "appeal_rejected": 1883,
+      "judgment_voided": 485,
+      "third_instance_maintain_rate": 77.92
+    },
+    {
+      "year_tw": 107,
+      "year_ad": 2018,
+      "total": 2504,
+      "appeal_rejected": 1773,
+      "judgment_voided": 519,
+      "third_instance_maintain_rate": 75.93
+    },
+    {
+      "year_tw": 108,
+      "year_ad": 2019,
+      "total": 2673,
+      "appeal_rejected": 1767,
+      "judgment_voided": 605,
+      "third_instance_maintain_rate": 72.73
+    },
+    {
+      "year_tw": 109,
+      "year_ad": 2020,
+      "total": 3505,
+      "appeal_rejected": 2229,
+      "judgment_voided": 892,
+      "third_instance_maintain_rate": 69.86
+    },
+    {
+      "year_tw": 110,
+      "year_ad": 2021,
+      "total": 3337,
+      "appeal_rejected": 2119,
+      "judgment_voided": 841,
+      "third_instance_maintain_rate": 70.07
+    },
+    {
+      "year_tw": 111,
+      "year_ad": 2022,
+      "total": 3104,
+      "appeal_rejected": 1931,
+      "judgment_voided": 797,
+      "third_instance_maintain_rate": 69.39
+    },
+    {
+      "year_tw": 112,
+      "year_ad": 2023,
+      "total": 2951,
+      "appeal_rejected": 1890,
+      "judgment_voided": 703,
+      "third_instance_maintain_rate": 71.32
+    },
+    {
+      "year_tw": 113,
+      "year_ad": 2024,
+      "total": 3188,
+      "appeal_rejected": 2331,
+      "judgment_voided": 546,
+      "third_instance_maintain_rate": 79.18
+    },
+    {
+      "year_tw": 114,
+      "year_ad": 2025,
+      "total": 2456,
+      "appeal_rejected": 1829,
+      "judgment_voided": 426,
+      "third_instance_maintain_rate": 79.46
+    }
+  ],
+  "supreme_criminal_appeal": [
+    {
+      "year_tw": 104,
+      "year_ad": 2015,
+      "total": 4034,
+      "appeal_rejected": 3503,
+      "judgment_voided": 302,
+      "third_instance_maintain_rate": 89.97
+    },
+    {
+      "year_tw": 105,
+      "year_ad": 2016,
+      "total": 3519,
+      "appeal_rejected": 3063,
+      "judgment_voided": 251,
+      "third_instance_maintain_rate": 90.31
+    },
+    {
+      "year_tw": 106,
+      "year_ad": 2017,
+      "total": 3937,
+      "appeal_rejected": 3423,
+      "judgment_voided": 279,
+      "third_instance_maintain_rate": 90.37
+    },
+    {
+      "year_tw": 107,
+      "year_ad": 2018,
+      "total": 4879,
+      "appeal_rejected": 4285,
+      "judgment_voided": 344,
+      "third_instance_maintain_rate": 90.68
+    },
+    {
+      "year_tw": 108,
+      "year_ad": 2019,
+      "total": 4424,
+      "appeal_rejected": 3776,
+      "judgment_voided": 366,
+      "third_instance_maintain_rate": 89.12
+    },
+    {
+      "year_tw": 109,
+      "year_ad": 2020,
+      "total": 6134,
+      "appeal_rejected": 4935,
+      "judgment_voided": 687,
+      "third_instance_maintain_rate": 84.79
+    },
+    {
+      "year_tw": 110,
+      "year_ad": 2021,
+      "total": 6064,
+      "appeal_rejected": 4926,
+      "judgment_voided": 557,
+      "third_instance_maintain_rate": 85.16
+    },
+    {
+      "year_tw": 111,
+      "year_ad": 2022,
+      "total": 5467,
+      "appeal_rejected": 4801,
+      "judgment_voided": 378,
+      "third_instance_maintain_rate": 90.55
+    },
+    {
+      "year_tw": 112,
+      "year_ad": 2023,
+      "total": 5528,
+      "appeal_rejected": 4985,
+      "judgment_voided": 346,
+      "third_instance_maintain_rate": 92.06
+    },
+    {
+      "year_tw": 113,
+      "year_ad": 2024,
+      "total": 5527,
+      "appeal_rejected": 4988,
+      "judgment_voided": 320,
+      "third_instance_maintain_rate": 92.38
+    },
+    {
+      "year_tw": 114,
+      "year_ad": 2025,
+      "total": 6416,
+      "appeal_rejected": 5821,
+      "judgment_voided": 341,
+      "third_instance_maintain_rate": 92.92
     }
   ],
   "family_by_year": [
